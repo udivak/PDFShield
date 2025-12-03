@@ -70,6 +70,3 @@
 *   [Hugging Face Transformers](https://huggingface.co/docs/transformers/index)
 *   [heBERT](https://huggingface.co/avichr/heBERT_NER)
 
-## License
-
-MIT
