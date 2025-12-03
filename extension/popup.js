@@ -26,8 +26,10 @@ document.addEventListener('DOMContentLoaded', function () {
         statusDiv.className = 'loading';
         redactBtn.disabled = true;
 
+        const languageSelect = document.getElementById('languageSelect');
         const formData = new FormData();
         formData.append('file', selectedFile);
+        formData.append('language', languageSelect.value);
 
         try {
             const response = await fetch('http://localhost:5001/redact', {
