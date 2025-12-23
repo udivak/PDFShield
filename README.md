@@ -8,6 +8,8 @@
 *   **Automated PII Detection**:
     *   **English**: Detects Names, Phone Numbers, Emails, US SSN, and Driver Licenses using `Microsoft Presidio`.
     *   **Hebrew**: Detects Names, Locations, Organizations using `heBERT` (Hugging Face) and Israeli IDs/Phone Numbers using custom patterns.
+*   **Review & Edit Mode**: Preview detected PII on the PDF and verify or modify redactions before finalizing.
+*   **Manual Redaction**: Draw custom boxes to redact any additional information.
 *   **Chrome Extension**: Easy-to-use popup interface for uploading and downloading files.
 *   **Free & Unlimited**: No API limits or subscription costs.
 
@@ -59,8 +61,12 @@
 2.  Click the **PDFShield** icon in your Chrome toolbar.
 3.  Select the document language (**English** or **Hebrew**).
 4.  Click **Choose PDF File** and select your document.
-5.  Click **Redact & Download**.
-6.  The redacted PDF will be automatically downloaded.
+5.  Click **Analyze & Review**.
+6.  A new tab will open displaying the PDF with detected PII highlighted in red.
+    *   **Remove Redaction**: Click on any red box to ignore it (it will disappear).
+    *   **Add Redaction**: Click and drag anywhere on the page to draw a blue box for manual redaction.
+7.  Click **Confirm & Download**.
+8.  The final redacted PDF will be automatically downloaded.
 
 ## Technologies
 
