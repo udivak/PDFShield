@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     redactBtn.addEventListener('click', async function () {
         if (!selectedFile) return;
 
-        statusDiv.textContent = 'Processing... This may take a moment.';
+        statusDiv.textContent = 'Analyzing for PII...';
         statusDiv.className = 'loading';
         redactBtn.disabled = true;
 
@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('language', languageSelect.value);
 
         try {
-            const response = await fetch('http://localhost:5001/redact', {
+            // 1. Send to Analyze Endpoint
+            const response = await fetch('http://localhost:5001/analyze', {
                 method: 'POST',
                 body: formData
             });
@@ -41,23 +42,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error(`Server error: ${response.statusText}`);
             }
 
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `redacted_${selectedFile.name}`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            const data = await response.json();
 
-            statusDiv.textContent = 'Success! Downloading file...';
-            statusDiv.className = 'success';
+            if (!data.findings) {
+                throw new Error("Invalid response from server");
+            }
+
+            statusDiv.textContent = `Found ${data.findings.length} items. Opening review...`;
+
+            // 2. Read file as Base64 to pass to review page
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const base64PDF = e.target.result.split(',')[1]; // Remove "data:application/pdf;base64," prefix if present
+
+                // 3. Store in local storage
+                await chrome.storage.local.set({
+                    pdfData: base64PDF,
+                    findings: data.findings,
+                    fileName: selectedFile.name
+                });
+
+                // 4. Open Review Page
+                chrome.tabs.create({ url: 'review.html' });
+                window.close(); // Close popup
+            };
+            reader.readAsDataURL(selectedFile);
+
         } catch (error) {
             console.error('Error:', error);
             statusDiv.textContent = 'Error: ' + error.message;
             statusDiv.className = 'error';
-        } finally {
             redactBtn.disabled = false;
         }
     });

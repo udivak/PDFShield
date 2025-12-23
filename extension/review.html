@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>PDFShield - Review Redactions</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0e0e0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        #container {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .page-container {
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            background-color: white;
+            cursor: crosshair;
+            /* Indicate drawing mode */
+        }
+
+        .selection-box {
+            position: absolute;
+            border: 2px dashed blue;
+            background-color: rgba(0, 0, 255, 0.1);
+            pointer-events: none;
+            /* Don't intercept mouse events during drag */
+            z-index: 100;
+        }
+
+        .redaction-box {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Preview as semi-transparent black */
+            border: 2px solid red;
+            /* Highlight to show it is a redaction */
+            cursor: pointer;
+            z-index: 5;
+            transition: background-color 0.2s;
+        }
+
+        .redaction-box:hover {
+            background-color: rgba(255, 0, 0, 0.3);
+            /* Easier to see what's under it on hover? Or just different */
+            border-color: #c0392b;
+        }
+
+        .redaction-box.deleted {
+            display: none;
+        }
+
+        /* Tooltip for box */
+        .redaction-box::after {
+            content: "Click to remove";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .redaction-box:hover::after {
+            opacity: 1;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+        }
+
+        .btn-success:hover {
+            background-color: #219150;
+        }
+
+        .btn-danger {
+            background-color: #c0392b;
+        }
+
+        .btn-danger:hover {
+            background-color: #a93226;
+        }
+
+        .info-bar {
+            font-size: 14px;
+            color: #ecf0f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <div class="info-bar">
+            <strong>Review Mode:</strong> Click a red box to remove it. <strong>Click & Drag</strong> to add a new
+            redaction manually.
+        </div>
+        <div>
+            <span id="stats" style="margin-right: 20px; color: #bdc3c7; font-size: 12px;"></span>
+            <button id="cancelBtn" class="btn btn-danger">Cancel</button>
+            <button id="downloadBtn" class="btn btn-success">Confirm & Download</button>
+        </div>
+    </div>
+    <div id="container">
+        <!-- PDF Pages will be rendered here -->
+    </div>
+
+    <script src="lib/pdf.js"></script>
+    <script src="review.js"></script>
+</body>
+
+</html>
